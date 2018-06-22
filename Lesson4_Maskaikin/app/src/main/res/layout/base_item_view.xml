@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/CardViewItem">
+
+    <android.support.v7.widget.AppCompatImageView
+        android:id="@+id/appCompactImageViewBase"
+        style="@style/AppCompactImageViewBase"
+        tools:background="@drawable/ic_uk_contacts" />
+
+    <TextView
+        android:id="@+id/textViewTitleBase"
+        style="@style/TextViewTitleBase"
+        tools:text="Контакты УК и служб" />
+
+
+</android.support.v7.widget.CardView>

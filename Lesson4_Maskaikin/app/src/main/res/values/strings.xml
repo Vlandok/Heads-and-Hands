@@ -1,0 +1,32 @@
+<resources>
+    <string name="app_name">Lesson4_Maskaikin</string>
+    <string name="ic_title_item">Домой</string>
+    <string name="ic_title_info">Инфо</string>
+    <string name="toolbar_title">Моя квартира</string>
+
+    <string name="toast_text_home">Вы нажали на Домой!</string>
+    <string name="message_alert_info">Вы нажали на Инфо.</string>
+    <string name="title_alert_info">Диалоговое окно!</string>
+    <string name="positive_button_alert">ОК</string>
+
+    <string name="uk_contacts_title">Контакты УК и служб</string>
+    <string name="request_title">Мои заявки</string>
+    <string name="about_title">Памятка жителя А101</string>
+
+    <string name="bill_title">Квитанции</string>
+    <string name="bill_description">-40 080,55 ₽</string>
+    <string name="counter_title">Счетчики</string>
+    <string name="counter_description">Подайте показания</string>
+    <string name="installment_title">Рассрочка</string>
+    <string name="installment_description">Сл. платеж 25.02.2018</string>
+    <string name="insurance_title">Страхование</string>
+    <string name="insurance_description">Полис до 12.01.2019</string>
+    <string name="tv_title">Интернет и ТВ</string>
+    <string name="tv_description">Баланс 350 ₽</string>
+    <string name="homephone_title">Домофон</string>
+    <string name="homephone_description">Подключен</string>
+    <string name="guard_title">Охрана</string>
+    <string name="guard_description">Нет</string>
+
+
+</resources>

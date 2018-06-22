@@ -1,0 +1,107 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="Toolbar">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">?attr/actionBarSize</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textColor">@color/charcoal_grey</item>
+        <item name="android:letterSpacing" tools:targetApi="lollipop">0.01</item>
+        <item name="android:lineSpacingExtra">3sp</item>
+        <item name="android:background">@color/white</item>
+    </style>
+
+    <style name="TextViewTitleBase">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">19dp</item>
+        <item name="android:layout_marginStart">64dp</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:textColor">@color/charcoal_grey</item>
+        <item name="android:letterSpacing">0.01</item>
+        <item name="android:lineSpacingExtra">1sp</item>
+        <item name="android:lines">1</item>
+    </style>
+
+    <style name="TextViewTitleDetail" parent="TextViewTitleBase">
+        <item name="android:layout_marginTop">71dp</item>
+        <item name="android:layout_marginStart">14dp</item>
+        <item name="android:lineSpacingExtra">4sp</item>
+    </style>
+
+    <style name="TextViewTitleDetailAllWidth" parent="TextViewTitleBase">
+        <item name="android:layout_marginTop">14dp</item>
+        <item name="android:layout_marginStart">64dp</item>
+
+    </style>
+
+    <style name="AppCompactImageViewBase">
+        <item name="android:layout_width">48dp</item>
+        <item name="android:layout_height">48dp</item>
+        <item name="android:layout_marginTop">4dp</item>
+        <item name="android:layout_marginBottom">4dp</item>
+        <item name="android:layout_marginStart">8dp</item>
+    </style>
+
+    <style name="AppCompactImageViewDetail" parent="AppCompactImageViewBase">
+        <item name="android:layout_marginTop">8dp</item>
+    </style>
+
+    <style name="AppCompactImageViewDetailAllWidth" parent="AppCompactImageViewBase">
+        <item name="android:layout_marginTop">8dp</item>
+    </style>
+
+    <style name="TextViewDescriptionDetail">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">97dp</item>
+        <item name="android:layout_marginStart">14dp</item>
+        <item name="android:layout_marginBottom">14dp</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:lines">1</item>
+        <item name="android:textColor">@color/warm_grey_two</item>
+        <item name="android:letterSpacing">0.02</item>
+        <item name="android:lineSpacingExtra">4sp</item>
+    </style>
+
+
+    <style name="TextViewDescriptionDetailAllWidth" parent="TextViewDescriptionDetail">
+        <item name="android:layout_marginTop">36dp</item>
+        <item name="android:layout_marginStart">64dp</item>
+        <item name="android:layout_marginBottom">13dp</item>
+        <item name="android:letterSpacing">0.02</item>
+        <item name="android:lineSpacingExtra">3sp</item>
+
+    </style>
+
+    <style name="CardViewItem">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginStart">8dp</item>
+        <item name="android:layout_marginTop">8dp</item>
+    </style>
+
+    <style name="RecyclerView">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginEnd">8dp</item>
+    </style>
+
+
+</resources>

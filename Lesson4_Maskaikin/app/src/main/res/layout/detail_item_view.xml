@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/CardViewItem">
+
+    <android.support.v7.widget.AppCompatImageView
+        android:id="@+id/appCompactImageViewDetail"
+        style="@style/AppCompactImageViewDetail"
+        tools:background="@drawable/ic_installment" />
+
+    <TextView
+        android:id="@+id/textViewTitleDetail"
+        style="@style/TextViewTitleDetail"
+        tools:text="Рассрочка" />
+
+    <TextView
+        android:id="@+id/textViewDescriptionDetail"
+        style="@style/TextViewDescriptionDetail"
+        tools:text="Сл. платеж 25.02.2018" />
+</android.support.v7.widget.CardView>
