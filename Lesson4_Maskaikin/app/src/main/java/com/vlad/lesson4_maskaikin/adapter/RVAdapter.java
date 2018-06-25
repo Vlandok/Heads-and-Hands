@@ -28,13 +28,13 @@ public class RVAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private ViewHolderBase viewHolderBase;
     private ViewHolderDetail viewHolderDetail;
     private ViewHolderDetailAllWidth viewHolderDetailAllWidth;
-    private static ArrayList<BaseInfoItem> itemsBase;
-    private static ArrayList<DetailInfoItem> itemsDetail;
+    private ArrayList<BaseInfoItem> itemsBase;
+    private ArrayList<DetailInfoItem> itemsDetail;
     private OnItemClickListener itemListener;
 
 
     public interface OnItemClickListener {
-        void onClickItem(int position, ArrayList list);
+        void onClickItem(BaseInfoItem item);
     }
 
     public void setOnItemClickListener(OnItemClickListener listener) {
@@ -50,6 +50,10 @@ public class RVAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             return 2;
         } else return 1;
 
+    }
+
+    public int getSpanSize(int position) {
+        return (position > (itemsDetail.size() - 1) || (itemsDetail.size() % 2 != 0 && position % (itemsDetail.size() - 1) == 0 && position != 0) ? 2 : 1);
     }
 
     @NonNull
@@ -114,7 +118,7 @@ public class RVAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     }
 
 
-    public static class ViewHolderBase extends RecyclerView.ViewHolder {
+    public class ViewHolderBase extends RecyclerView.ViewHolder {
         AppCompatImageView appCompatImageViewBase;
         TextView textViewTitleBase;
 
@@ -131,7 +135,7 @@ public class RVAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                         if (position != RecyclerView.NO_POSITION) {
                             if (position > itemsDetail.size() - 1) {
                                 position = position - itemsDetail.size();
-                                listener.onClickItem(position, itemsBase);
+                                listener.onClickItem(itemsBase.get(position));
                             }
                         }
                     }
@@ -140,7 +144,7 @@ public class RVAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         }
     }
 
-    public static class ViewHolderDetail extends RecyclerView.ViewHolder {
+    public class ViewHolderDetail extends RecyclerView.ViewHolder {
         AppCompatImageView appCompatImageViewDetail;
         TextView textViewTitleDetail;
         TextView textViewDescriptionDetail;
@@ -157,7 +161,7 @@ public class RVAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                     if (listener != null) {
                         int position = getAdapterPosition();
                         if (position != RecyclerView.NO_POSITION) {
-                            listener.onClickItem(position, itemsDetail);
+                            listener.onClickItem(itemsDetail.get(position));
                         }
                     }
                 }
@@ -166,7 +170,7 @@ public class RVAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         }
     }
 
-    public static class ViewHolderDetailAllWidth extends RecyclerView.ViewHolder {
+    public class ViewHolderDetailAllWidth extends RecyclerView.ViewHolder {
         AppCompatImageView appCompatImageViewDetailAllWidth;
         TextView textViewTitleDetailAllWidth;
         TextView textViewDescriptionDetailAllWidth;
@@ -183,12 +187,16 @@ public class RVAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                     if (listener != null) {
                         int position = getAdapterPosition();
                         if (position != RecyclerView.NO_POSITION) {
-                            listener.onClickItem(position, itemsDetail);
+                            listener.onClickItem(itemsDetail.get(position));
                         }
                     }
                 }
             });
         }
+    }
+
+    public RVAdapter(){
+
     }
 
     public RVAdapter(ArrayList<DetailInfoItem> itemsDetail, ArrayList<BaseInfoItem> itemsBase) {

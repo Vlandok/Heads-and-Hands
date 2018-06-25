@@ -20,8 +20,7 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
-    private Snackbar snackbarBaseItem;
-    private Snackbar snackbarDetailItem;
+    private Snackbar snackbarItem;
     private ArrayList<BaseInfoItem> listBaseItems;
     private ArrayList<DetailInfoItem> listDetailItems;
     private LinearLayout lnr;
@@ -39,29 +38,27 @@ public class MainActivity extends AppCompatActivity {
 
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 2);
 
+        final RVAdapter adapter = new RVAdapter(initializeDetailItems(), initializeBaseItems());
+
         gridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
-            @Override
+
             public int getSpanSize(int position) {
-                return (position > (initializeDetailItems().size() - 1) || (initializeDetailItems().size() % 2 != 0 && position % (initializeDetailItems().size() - 1) == 0 && position != 0) ? 2 : 1);
+               return adapter.getSpanSize(position);
             }
         });
 
 
         recyclerView.setLayoutManager(gridLayoutManager);
-        RVAdapter adapter = new RVAdapter(initializeDetailItems(), initializeBaseItems());
+
         adapter.notifyDataSetChanged();
         recyclerView.setAdapter(adapter);
         adapter.setOnItemClickListener(new RVAdapter.OnItemClickListener() {
             @Override
-            public void onClickItem(int position, ArrayList list) {
+            public void onClickItem(BaseInfoItem item) {
 
-                if (list == listBaseItems) {
-                    snackbarBaseItem = Snackbar.make(lnr, listBaseItems.get(position).getTitle(), Snackbar.LENGTH_LONG);
-                    snackbarBaseItem.show();
-                } else {
-                    snackbarDetailItem = Snackbar.make(lnr, listDetailItems.get(position).getTitle(), Snackbar.LENGTH_LONG);
-                    snackbarDetailItem.show();
-                }
+                    snackbarItem = Snackbar.make(lnr, item.getTitle(), Snackbar.LENGTH_LONG);
+                    snackbarItem.show();
+
             }
         });
 
