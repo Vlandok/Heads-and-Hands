@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Lesson5_Maskaikin_2</string>
+
+    <string name="activity_main">Главная</string>
+    <string name="activity_2">Activity 2</string>
+    <string name="activity_3">Activity 3</string>
+    <string name="enter">Войти</string>
+
+</resources>
+
