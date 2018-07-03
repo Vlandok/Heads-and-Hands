@@ -9,8 +9,6 @@ import android.view.ViewStub;
 
 public class Activity3 extends SuperMainActivity {
 
-    private ViewStub viewStub;
-
     public static Intent createStartIntentWithFlag(Context context) {
 
         Intent intent = new Intent(context, Activity3.class);
@@ -25,15 +23,13 @@ public class Activity3 extends SuperMainActivity {
     }
 
     @Override
+    void setLayoutResource() {
+        viewStub.setLayoutResource(R.layout.viewstub_activity_3);
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_super_main);
 
-        setToolbar();
-        setNavigationView();
-
-        viewStub = findViewById(R.id.viewStub);
-        viewStub.setLayoutResource(R.layout.viewstub_activity_3);
-        viewStub.inflate();
     }
 }

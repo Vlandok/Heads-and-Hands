@@ -14,8 +14,6 @@ import java.util.Date;
 
 public class Activity2 extends SuperMainActivity {
 
-    private ViewStub viewStub;
-
     public static Intent createStartIntentWithFlag(Context context) {
 
         Intent intent = new Intent(context, Activity2.class);
@@ -29,16 +27,13 @@ public class Activity2 extends SuperMainActivity {
     }
 
     @Override
+    void setLayoutResource() {
+        viewStub.setLayoutResource(R.layout.viewstub_activity_2);
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_super_main);
-
-        setToolbar();
-        setNavigationView();
-
-        viewStub = findViewById(R.id.viewStub);
-        viewStub.setLayoutResource(R.layout.viewstub_activity_2);
-        viewStub.inflate();
 
     }
 
