@@ -20,6 +20,7 @@
     <string name="show_banner">ПОКАЗАТЬ БАННЕР</string>
     <string name="collapse_banner">СВЕРНУТЬ БАННЕР</string>
     <string name="banner">Баннер</string>
+    <string name="error_image">Ошибка! Не получилось показать картинку.</string>
 
 </resources>
 

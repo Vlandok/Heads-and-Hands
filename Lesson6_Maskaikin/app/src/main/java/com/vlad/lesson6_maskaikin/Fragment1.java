@@ -18,8 +18,8 @@ public class Fragment1 extends Fragment {
     }
 
     public static Fragment1 getInstance() {
-        Fragment1 fragment_1 = new Fragment1();
-        return fragment_1;
+        Fragment1 fragment1 = new Fragment1();
+        return fragment1;
     }
 
     @Override

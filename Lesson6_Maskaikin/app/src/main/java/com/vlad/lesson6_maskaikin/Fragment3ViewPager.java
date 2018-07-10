@@ -25,8 +25,8 @@ public class Fragment3ViewPager extends Fragment {
     }
 
     public static Fragment3ViewPager getInstance() {
-        Fragment3ViewPager fragment_3_view_pager = new Fragment3ViewPager();
-        return fragment_3_view_pager;
+        Fragment3ViewPager fragment3ViewPager = new Fragment3ViewPager();
+        return fragment3ViewPager;
     }
 
     @Override

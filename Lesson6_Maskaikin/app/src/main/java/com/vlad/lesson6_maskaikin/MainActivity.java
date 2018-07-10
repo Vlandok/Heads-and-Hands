@@ -27,9 +27,6 @@ public class MainActivity extends AppCompatActivity implements GetStringFromClic
     private DrawerLayout mDrawerLayout;
     private FragmentManager fragmentManager;
     private FragmentTransaction fragmentTransaction;
-    private ViewPager viewPager;
-    private PagerAdapter pagerAdapter;
-    private FrameLayout container;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,29 +37,8 @@ public class MainActivity extends AppCompatActivity implements GetStringFromClic
         mDrawerLayout = findViewById(R.id.drawer_layout);
         navigationView = findViewById(R.id.navigation_view);
         bottomNavigationView = findViewById(R.id.bottom_navigation);
-        container = findViewById(R.id.container);
-
-//        viewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-//            @Override
-//            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-//
-//            }
-//
-//            @Override
-//            public void onPageSelected(int position) {
-//                Log.d("АГА", "onPageSelected, position = " + position);
-//            }
-//
-//            @Override
-//            public void onPageScrollStateChanged(int state) {
-//
-//            }
-//        });
 
         fragmentManager = getSupportFragmentManager();
-
-        fragmentTransaction = fragmentManager.beginTransaction().add(R.id.container, Fragment1.getInstance());
-        fragmentTransaction.commit();
 
         setSupportActionBar(toolbar);
 
@@ -140,6 +116,7 @@ public class MainActivity extends AppCompatActivity implements GetStringFromClic
                     toolbar.setTitle(item.getTitle());
                 }
 
+
                 fragmentTransaction = fragmentManager.beginTransaction();
 
                 switch (id) {
@@ -156,10 +133,11 @@ public class MainActivity extends AppCompatActivity implements GetStringFromClic
 
                 fragmentTransaction.commit();
 
-
                 return false;
             }
         });
+
+        bottomNavigationView.setSelectedItemId(R.id.bottom_navigation_item_one);
 
     }
 
@@ -172,7 +150,7 @@ public class MainActivity extends AppCompatActivity implements GetStringFromClic
 
 
     @Override
-    public void GetStringFromClickedImage(String data) {
+    public void getStringFromClickedImage(String data) {
         Toast toastTextImage = Toast.makeText(MainActivity.this, data, Toast.LENGTH_SHORT);
         toastTextImage.show();
     }
