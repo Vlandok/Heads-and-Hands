@@ -1,0 +1,29 @@
+<resources>
+    <string name="app_name">Lesson6_Maskaikin_Kotlin</string>
+
+    <string name="activity_main">Главная</string>
+    <string name="activity_2">Activity 2</string>
+    <string name="activity_3">Activity 3</string>
+    <string name="enter">Войти</string>
+    <string name="search">Поиск</string>
+
+    <string name="extra_menu_item_1">Item 1</string>
+    <string name="extra_menu_item_2">Item 2</string>
+    <string name="extra_menu_item_3">Item 3</string>
+
+    <string name="bottom_navigation_item_one">Item one</string>
+    <string name="bottom_navigation_item_two">Item two</string>
+    <string name="bottom_navigation_item_three">Item three</string>
+
+    <string name="text_view_fragment_1">Фрагмент 1</string>
+    <string name="text_view_fragment_2">Фрагмент 2</string>
+    <string name="show_banner">ПОКАЗАТЬ БАННЕР</string>
+    <string name="collapse_banner">СВЕРНУТЬ БАННЕР</string>
+    <string name="banner">Баннер</string>
+    <string name="error_image">Ошибка! Не получилось показать картинку.</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+</resources>
+
