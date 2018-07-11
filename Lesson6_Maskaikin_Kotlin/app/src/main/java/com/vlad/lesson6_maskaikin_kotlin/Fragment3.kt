@@ -18,7 +18,7 @@ class Fragment3 : Fragment() {
         val textViewFragment3 = layoutView.findViewById<TextView>(R.id.textViewFragment3)
 
         textViewFragment3.setOnClickListener(object : View.OnClickListener {
-            internal var checkClick: Boolean = false
+            var checkClick: Boolean = false
 
             override fun onClick(view: View) {
                 if (!checkClick) {
@@ -43,7 +43,7 @@ class Fragment3 : Fragment() {
 
     companion object {
 
-        val TAG_VIEW_PAGER = "view pager"
+        const val TAG_VIEW_PAGER = "view pager"
 
 
         fun getInstance() : Fragment3 {

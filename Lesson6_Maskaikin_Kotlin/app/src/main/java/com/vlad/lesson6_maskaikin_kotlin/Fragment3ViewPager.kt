@@ -22,7 +22,7 @@ class Fragment3ViewPager : Fragment() {
         val viewPager = layoutView.findViewById<WrapContentHeightViewPager>(R.id.viewPager)
         val indicator = layoutView.findViewById<CircleIndicator>(R.id.indicator)
         val pagerAdapter = ImageFragmentAdapter(childFragmentManager)
-        viewPager.setAdapter(pagerAdapter)
+        viewPager.adapter = pagerAdapter
         indicator.setViewPager(viewPager)
         viewPager.measure(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
 

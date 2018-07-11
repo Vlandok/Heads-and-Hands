@@ -16,7 +16,7 @@ class ImageFragmentAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm) {
 
 
     init {
-        banners = ArrayList<Banner>()
+        banners = ArrayList()
         banners.add(Banner(R.drawable.img_1, "Картинка 1"))
         banners.add(Banner(R.drawable.img_2, "Картинка 2"))
         banners.add(Banner(R.drawable.img_3, "Картинка 3"))
@@ -24,8 +24,7 @@ class ImageFragmentAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm) {
     }
 
     override fun getPageTitle(position: Int): CharSequence? {
-        return banners[position].getStringBanner()
-
+        return banners[position].stringBanner
     }
 
     override fun getItem(position: Int): Fragment {

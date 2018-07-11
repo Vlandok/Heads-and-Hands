@@ -41,24 +41,24 @@ class Fragment3ImageAndText : Fragment() {
 
         val imageView = view.findViewById<ImageView>(R.id.imageViewFragment3)
         imageView.setImageResource(img)
-        imageView.setScaleType(ImageView.ScaleType.CENTER_CROP)
+        imageView.scaleType = ImageView.ScaleType.CENTER_CROP
         val textView = view.findViewById<TextView>(R.id.textViewFragment3)
-        textView.setText(text)
-        imageView.setOnClickListener(View.OnClickListener { getStringFromClickedImage.getStringFromClickedImage(text) })
+        textView.text = text
+        imageView.setOnClickListener { getStringFromClickedImage.getStringFromClickedImage(text) }
 
         return view
     }
 
     companion object {
 
-        internal val ARGUMENT_IMAGE = "argument_image"
-        internal val ARGUMENT_TEXT = "argument_text"
+        internal const val ARGUMENT_IMAGE = "argument_image"
+        internal const val ARGUMENT_TEXT = "argument_text"
 
         fun getInstance(banner: Banner): Fragment3ImageAndText {
             val fragment3ImageAndText = Fragment3ImageAndText()
             val arguments = Bundle()
-            arguments.putInt(ARGUMENT_IMAGE, banner.getImageBanner())
-            arguments.putString(ARGUMENT_TEXT, banner.getStringBanner())
+            arguments.putInt(ARGUMENT_IMAGE, banner.imageBanner)
+            arguments.putString(ARGUMENT_TEXT, banner.stringBanner)
             fragment3ImageAndText.arguments = arguments
             return fragment3ImageAndText
         }
