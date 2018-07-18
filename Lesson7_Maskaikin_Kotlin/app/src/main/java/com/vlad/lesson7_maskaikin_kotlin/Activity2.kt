@@ -10,6 +10,7 @@ import android.os.Build
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.annotation.RequiresApi
+import android.support.v4.content.ContextCompat
 import android.text.Html
 import com.vlad.lesson7_maskaikin_kotlin.fragments.FragmentList
 import kotlinx.android.synthetic.main.activity_2.*
@@ -24,9 +25,7 @@ import com.vlad.lesson7_maskaikin_kotlin.adapters.RVAdapter.Companion.formatter
 import android.widget.TextView
 
 
-@Suppress("DEPRECATION")
 class Activity2 : AppCompatActivity() {
-
 
     private lateinit var nm: NotificationManager
     private lateinit var am: AlarmManager
@@ -57,16 +56,15 @@ class Activity2 : AppCompatActivity() {
         val NUMS_PICKER_FOUR_HOUR = 15..240
     }
 
-
-    @SuppressLint("SetTextI18n", "ResourceAsColor", "InflateParams")
-    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_2)
 
         toolbar.title = ""
 
-        window.statusBarColor = Color.TRANSPARENT
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            window.statusBarColor = Color.TRANSPARENT
+        }
         window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
 
         nm = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -98,9 +96,11 @@ class Activity2 : AppCompatActivity() {
         }
 
         textViewNameBridge.text = bridge.name?.replace(" мост", "")?.replace("Мост ", "")
-        imageViewStatusBridge.setImageDrawable(getDrawable(getImageStatusBridge(bridge)))
+        imageViewStatusBridge.setImageDrawable(ContextCompat.getDrawable(applicationContext, getImageStatusBridge(bridge)))
         textViewCloseTimeBridge.text = getTimeCloseBridge(bridge)
-        textViewDescriptionBridge.text = Html.fromHtml(bridge.description)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            textViewDescriptionBridge.text = Html.fromHtml(bridge.description, 0)
+        }
 
         val arrayString: Array<String> = Array(SIZE_ARRAY_PICKER) { "default" }
         val nums = NUMS_PICKER_FOUR_HOUR
@@ -161,8 +161,8 @@ class Activity2 : AppCompatActivity() {
                 bridge.checkTimeBeforeStartInMinute = timeInMinute
 
                 am = getSystemService(ALARM_SERVICE) as AlarmManager
-                am.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + getTimeBeforeStart(bridge) - timeInMiliseconds, pIntent1)
-
+                am.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() , pIntent1)
+              //  + getTimeBeforeStart(bridge) - timeInMiliseconds
                 startActivityMainWithBooleanAndFlag(bridge, true, getTextForTextViewSetAlarm(timeInMinute))
                 customDialog.dismiss()
             }
@@ -170,9 +170,7 @@ class Activity2 : AppCompatActivity() {
             if (bridge.checkAlarm) {
                 customDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setOnClickListener { _ ->
                     intent2 = createIntent(bridge.name, bridge.id)
-                    pIntent2 = PendingIntent.getBroadcast(this, 0, intent2, 0)
-                    am = getSystemService(ALARM_SERVICE) as AlarmManager
-                    am.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), pIntent2)
+                    sendBroadcast(intent2)
 
                     startActivityMainWithBooleanAndFlag(bridge, false)
                     customDialog.dismiss()
@@ -204,7 +202,6 @@ class Activity2 : AppCompatActivity() {
         return divorse
     }
 
-    @SuppressLint("SetTextI18n")
     private fun getTextForTextViewSetAlarm(timeInMinute: Int): String {
         val hour = timeInMinute / ONE_HOUR_IN_MINUTE
         val minute: Int = timeInMinute % ONE_HOUR_IN_MINUTE
@@ -332,10 +329,10 @@ class Activity2 : AppCompatActivity() {
 
     private fun createIntent(msgText: String, nameBridge: String?, idBridge: Int?): Intent {
         val intent = Intent(this, Receiver::class.java)
-        intent.action = nameBridge
+        intent.action = ACTION_NOTIFY
 
         intent.putExtra(TEXT_NOTIF, msgText)
-        //intent.putExtra(NAME_BRIDGE, nameBridge)
+        intent.putExtra(NAME_BRIDGE, nameBridge)
         intent.putExtra(ID_BRIDGE_FOR_RECEIVER, idBridge)
         return intent
     }

@@ -15,6 +15,7 @@ import com.google.gson.Gson
 private val RETROFIT_GET_BRIDGE_URL = "http://gdemost.handh.ru/"
 
 object RetrofitClient {
+
     private var outInstance: Retrofit? = null
 
     val instance:Retrofit

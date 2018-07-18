@@ -110,7 +110,6 @@ class FragmentList : Fragment() {
 
     private fun displayData(bridges: ResultBridge, idBridge: Int?, checkAlarm: Boolean?, text: String?) {
         val adapter = RVAdapter(bridges, idBridge, checkAlarm)
-        adapter.notifyDataSetChanged()
         recyclerViewListBridges.adapter = adapter
 
         adapter.setOnItemClickListener(object : RVAdapter.OnItemClickListener {

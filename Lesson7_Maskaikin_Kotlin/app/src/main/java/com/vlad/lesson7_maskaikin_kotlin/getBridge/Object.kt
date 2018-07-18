@@ -79,53 +79,6 @@ class Object() : Parcelable {
         checkTimeBeforeStartInMinute = parcel.readValue(Int::class.java.classLoader) as? Int
     }
 
-//    constructor(parcel: Parcel) : this() {
-//        description = parcel.readString()
-//        descriptionEng = parcel.readString()
-//        divorces = parcel.createTypedArrayList(Divorce)
-//        id = parcel.readValue(Int::class.java.classLoader) as? Int
-//        lat = parcel.readValue(Double::class.java.classLoader) as? Double
-//        lng = parcel.readValue(Double::class.java.classLoader) as? Double
-//        name = parcel.readString()
-//        nameEng = parcel.readString()
-//        photoClose = parcel.readString()
-//        photoOpen = parcel.readString()
-//        public = parcel.readValue(Boolean::class.java.classLoader) as? Boolean
-//        resourceUri = parcel.readString()
-//        checkAlarm = parcel.readValue(Boolean::class.java.classLoader) as Boolean
-//        checkTimeBeforeStartInMinute = parcel.readInt()
-//    }
-//
-//    override fun writeToParcel(parcel: Parcel, flags: Int) {
-//        parcel.writeString(description)
-//        parcel.writeString(descriptionEng)
-//        parcel.writeTypedList(divorces)
-//        parcel.writeValue(id)
-//        parcel.writeValue(lat)
-//        parcel.writeValue(lng)
-//        parcel.writeString(name)
-//        parcel.writeString(nameEng)
-//        parcel.writeString(photoClose)
-//        parcel.writeString(photoOpen)
-//        parcel.writeValue(public)
-//        parcel.writeString(resourceUri)
-//        parcel.writeValue(checkAlarm)
-//        checkTimeBeforeStartInMinute?.let { parcel.writeInt(it) }
-//    }
-//
-//    override fun describeContents(): Int {
-//        return 0
-//    }
-//
-//    companion object CREATOR : Parcelable.Creator<Object> {
-//        override fun createFromParcel(parcel: Parcel): Object {
-//            return Object(parcel)
-//        }
-//
-//        override fun newArray(size: Int): Array<Object?> {
-//            return arrayOfNulls(size)
-//        }
-//    }
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeString(description)
         parcel.writeString(descriptionEng)

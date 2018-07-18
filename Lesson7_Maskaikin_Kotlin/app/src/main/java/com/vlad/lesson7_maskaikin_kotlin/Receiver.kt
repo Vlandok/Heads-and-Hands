@@ -27,16 +27,16 @@ class Receiver : BroadcastReceiver() {
 
         } else {
             createNotification(ctx, notificationManager, REMINER, intent.getStringExtra(Activity2.TEXT_NOTIF),
-                    intent.action)
+                    intent.getStringExtra(Activity2.NAME_BRIDGE), intent.getIntExtra(Activity2.ID_BRIDGE_FOR_RECEIVER, -1))
         }
     }
 
     fun createNotification(context: Context, notificationManager: NotificationManager, msg: String,
-                           msgText: String, msgAlert: String) {
+                           msgText: String, msgAlert: String, idBridge: Int) {
 
         val newIntent = Intent(context, MainActivity::class.java)
 
-        val notificatonIntent = PendingIntent.getActivity(context, 0, newIntent, PendingIntent.FLAG_CANCEL_CURRENT)
+        val notificatonIntent = PendingIntent.getActivity(context, 0, newIntent, 0)
         val mBuilder = NotificationCompat.Builder(context, REMINER)
                 .setSmallIcon(R.drawable.ic_brige_normal)
                 .setContentTitle(msg)
@@ -48,7 +48,6 @@ class Receiver : BroadcastReceiver() {
                 .setAutoCancel(true)
 
         notificationManager.notify(ID_NOTIFY, mBuilder.build())
-       // notificationManager.notify(idBridge, mBuilder.build())
     }
 
 }

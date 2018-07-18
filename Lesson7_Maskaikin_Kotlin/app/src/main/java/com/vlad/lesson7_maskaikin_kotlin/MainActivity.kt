@@ -15,21 +15,19 @@ import kotlinx.android.synthetic.main.activity_main.*
 import android.support.design.widget.Snackbar
 
 
-@SuppressLint("StaticFieldLeak")
-private lateinit var myToolbar: Toolbar
-private lateinit var myFragmentManager: FragmentManager
-private lateinit var fragmentTransaction: FragmentTransaction
-
 class MainActivity : AppCompatActivity() {
+
+    private lateinit var fragmentTransaction: FragmentTransaction
+    private lateinit var myToolbar: Toolbar
 
     @SuppressLint("ResourceType")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        myToolbar = findViewById(R.id.toolbar)
+        myToolbar = findViewById (R.id.toolbar)
         setSupportActionBar(myToolbar)
-        myFragmentManager = supportFragmentManager
+        val myFragmentManager = supportFragmentManager
 
         val checkAlarm = intent.getBooleanExtra(Activity2.CHECK_ALARM, false)
         val idBridge = intent.getIntExtra(Activity2.ID_BRIDGE, -1)
