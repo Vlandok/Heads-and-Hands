@@ -1,0 +1,13 @@
+<android.support.design.widget.AppBarLayout android:id="@+id/appBarLayout"
+    style="@style/AppBarLayout"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        style="@style/Toolbar"
+        app:title="@string/notes"
+        tools:ignore="OnClick" />
+
+</android.support.design.widget.AppBarLayout>

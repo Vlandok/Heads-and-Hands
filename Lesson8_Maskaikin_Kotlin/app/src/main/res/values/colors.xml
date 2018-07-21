@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+    
+    <color name="white_four">#e6e6e6</color>
+    <color name="mango_two">#feb92d</color>
+    <color name="mango">#f99d26</color>
+    <color name="white">#ffffff</color>
+    <color name="greyish_brown_two">#424242</color>
+    <color name="turquoise_blue">#00bcd4</color>
+    <color name="warm_grey_three">#747474</color>
+    <color name="black_87">#de000000</color>
+    <color name="black">#000000</color>
+    <color name="black_54">#8a000000</color>
+    <color name="warm_grey_four">#757575</color>
+    
+    <color name="lipstick">#e51c23</color>
+    <color name="lipstick_two">#e91e63</color>
+    <color name="barney">#9c27b0</color>
+
+
+</resources>
