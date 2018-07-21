@@ -12,34 +12,12 @@
 
     <EditText
         android:id="@+id/editTextAddTitleNote"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="35dp"
-        android:ems="10"
-        android:fontFamily="sans-serif-medium"
-        android:inputType="text"
-        android:lineSpacingExtra="8sp"
         android:hint="@string/title"
-        android:textColor="@color/warm_grey_four"
-        android:textSize="20sp"
-        android:textStyle="normal" />
+        style="@style/EditTextAddTitleNote" />
 
     <EditText
         android:id="@+id/editTextAddTextNote"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="12dp"
-        android:ems="10"
-        android:fontFamily="sans-serif"
-        android:inputType="textMultiLine"
-        android:lineSpacingExtra="8sp"
         android:hint="@string/text_note"
-        android:textColor="@color/black_54"
-        android:textSize="16sp"
-        android:textStyle="normal" />
+        style="@style/EditTextAddTextNote" />
 
 </LinearLayout>

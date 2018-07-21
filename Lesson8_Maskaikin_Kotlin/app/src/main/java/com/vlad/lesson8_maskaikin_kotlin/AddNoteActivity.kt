@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.content.Intent
 import android.view.Menu
+import android.widget.Toast
 import com.vlad.lesson8_maskaikin_kotlin.datebase.AppDatabase
 import com.vlad.lesson8_maskaikin_kotlin.entity.Note
 import kotlinx.android.synthetic.main.activity_add_note.*
@@ -64,6 +65,7 @@ class AddNoteActivity : AppCompatActivity() {
 
         if (idNote != FAIL_GET_ID_EXTRA) {
             note = db.getNoteDao().getNoteId(idNote)
+            backgroundColorNote = note.backgroundColor
             editTextAddTitleNote.setText(note.title)
             editTextAddTextNote.setText(note.text)
         }
@@ -113,8 +115,6 @@ class AddNoteActivity : AppCompatActivity() {
         colors.add("#ff5623")
         colors.add("#9e9e9e")
         colors.add("#607d8b")
-
-
 
         colorPicker.setColors(colors)
                 .setColumns(NUM_COLUMNS_COLOR_PICKER)
