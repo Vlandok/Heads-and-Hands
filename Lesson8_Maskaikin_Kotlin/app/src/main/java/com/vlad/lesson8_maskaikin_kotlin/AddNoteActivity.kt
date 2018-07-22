@@ -5,7 +5,6 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.content.Intent
 import android.view.Menu
-import android.widget.Toast
 import com.vlad.lesson8_maskaikin_kotlin.datebase.AppDatabase
 import com.vlad.lesson8_maskaikin_kotlin.entity.Note
 import kotlinx.android.synthetic.main.activity_add_note.*
@@ -15,7 +14,7 @@ import com.vlad.lesson8_maskaikin_kotlin.datebase.App
 import io.reactivex.Completable
 import petrov.kristiyan.colorpicker.ColorPicker
 
-
+//Экран добавления/редактирования заметок
 class AddNoteActivity : AppCompatActivity() {
 
     private lateinit var db: AppDatabase
@@ -90,7 +89,7 @@ class AddNoteActivity : AppCompatActivity() {
             Completable.fromCallable { db.getNoteDao().updateTextAndTitleNote(idNote, text, title, backgroundColorNote) }
                     .subscribe()
         } else if (title.isNotEmpty() || text.isNotEmpty()) {
-            note = Note(title, text, backgroundColorNote, false)
+            note = Note(title, text, backgroundColorNote)
             Completable.fromCallable { db.getNoteDao().insertAllNote(note) }
                     .subscribe()
         }

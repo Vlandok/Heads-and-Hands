@@ -1,6 +1,5 @@
 package com.vlad.lesson8_maskaikin_kotlin
 
-
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
@@ -21,12 +20,12 @@ import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.appbar_with_toolbar.*
 import android.support.v7.widget.SearchView
 import com.vlad.lesson8_maskaikin_kotlin.datebase.App
+import io.reactivex.Flowable
 
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var disposableNotes: Disposable
-    private lateinit var disposableNotesFromSearch: Disposable
     private lateinit var db: AppDatabase
 
     companion object {
@@ -49,7 +48,9 @@ class MainActivity : AppCompatActivity() {
 
         db = App.instance.database
 
-        getNotesFromSqlRx()
+        getNotesFromSqlRx(db.getNoteDao().getAllNoteWithOutArchive(),
+                getString(R.string.error_get_notes_from_sql_rx),
+                getString(R.string.error_get_notes_from_sql_rx))
 
     }
 
@@ -57,50 +58,18 @@ class MainActivity : AppCompatActivity() {
         if (!disposableNotes.isDisposed) {
             disposableNotes.dispose()
         }
-        if (!disposableNotesFromSearch.isDisposed) {
-            disposableNotes.dispose()
-        }
         super.onDestroy()
     }
 
-    private fun getNotesFromSqlRx() {
+    private fun getNotesFromSqlRx(query: Flowable<List<Note>>, errorSqlEmpty: String, errorGetNotesFromSqlRx: String) {
 
-        disposableNotes = db.getNoteDao().getAllNoteWithOutArchive()
+        disposableNotes = query
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         { notes ->
                             if (notes.isEmpty()) {
-                                textViewNotesSqlEmpty.visibility = View.VISIBLE
-                            }else {
-                                textViewNotesSqlEmpty.visibility = View.INVISIBLE
-                            }
-                            displayNotes(notes)
-                            progressBarActivityMain.visibility = View.INVISIBLE
-                        }
-                ) { exception ->
-                    Log.e(MY_LOG, getString(R.string.error), exception)
-                    progressBarActivityMain.visibility = View.INVISIBLE
-
-                    val snackbarError = Snackbar.make(linerLayoutMainActivityParent,
-                            getText(R.string.error_get_notes_from_sql_rx),
-                            Snackbar.LENGTH_INDEFINITE)
-                            .setAction(getText(R.string.yes)) {
-                                getNotesFromSqlRx()
-                            }
-                    snackbarError.show()
-                }
-    }
-
-    private fun getNotesFromSqlRxWithSearch(newText: String) {
-
-        disposableNotesFromSearch = db.getNoteDao().getAllNoteWithSearchTextWithOutArchive(newText)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                        { notes ->
-                            if (notes.isEmpty()) {
-                                textViewNotesSqlEmpty.text = getString(R.string.notes_sql_empty_for_search)
+                                textViewNotesSqlEmpty.text = errorSqlEmpty
                                 textViewNotesSqlEmpty.visibility = View.VISIBLE
                             } else {
                                 textViewNotesSqlEmpty.visibility = View.INVISIBLE
@@ -113,10 +82,10 @@ class MainActivity : AppCompatActivity() {
                     progressBarActivityMain.visibility = View.INVISIBLE
 
                     val snackbarError = Snackbar.make(linerLayoutMainActivityParent,
-                            getText(R.string.error_get_notes_from_sql_rx_with_search),
+                            errorGetNotesFromSqlRx,
                             Snackbar.LENGTH_INDEFINITE)
                             .setAction(getText(R.string.yes)) {
-                                getNotesFromSqlRxWithSearch(newText)
+                                getNotesFromSqlRx(query, errorSqlEmpty, errorGetNotesFromSqlRx)
                             }
                     snackbarError.show()
                 }
@@ -166,19 +135,27 @@ class MainActivity : AppCompatActivity() {
 
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String): Boolean {
-                if(query.isNotEmpty()) {
-                    getNotesFromSqlRxWithSearch(query)
-                }else{
-                    getNotesFromSqlRx()
+                if (query.isNotEmpty()) {
+                    getNotesFromSqlRx(db.getNoteDao().getAllNoteWithSearchTextWithOutArchive(query),
+                            getString(R.string.notes_sql_empty_for_search),
+                            getString(R.string.error_get_notes_from_sql_rx_with_search))
+                } else {
+                    getNotesFromSqlRx(db.getNoteDao().getAllNoteWithOutArchive(),
+                            getString(R.string.error_get_notes_from_sql_rx),
+                            getString(R.string.error_get_notes_from_sql_rx))
                 }
                 return false
             }
 
             override fun onQueryTextChange(newText: String): Boolean {
                 if (newText.isEmpty()) {
-                    getNotesFromSqlRx()
+                    getNotesFromSqlRx(db.getNoteDao().getAllNoteWithOutArchive(),
+                            getString(R.string.error_get_notes_from_sql_rx),
+                            getString(R.string.error_get_notes_from_sql_rx))
                 } else {
-                    getNotesFromSqlRxWithSearch(newText)
+                    getNotesFromSqlRx(db.getNoteDao().getAllNoteWithSearchTextWithOutArchive(newText),
+                            getString(R.string.notes_sql_empty_for_search),
+                            getString(R.string.error_get_notes_from_sql_rx_with_search))
                 }
                 return false
             }

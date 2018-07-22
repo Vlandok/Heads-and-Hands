@@ -8,7 +8,7 @@ import android.arch.persistence.room.PrimaryKey
 class Note(
            @ColumnInfo(name = "title") var title: String,
            @ColumnInfo(name = "text") var text: String,
-           @ColumnInfo(name = "background_color") var backgroundColor: String = "#FFFFFF",
+           @ColumnInfo(name = "background_color") var backgroundColor: String,
            @ColumnInfo(name = "check_archive") var checkArchive: Boolean = false) {
     @PrimaryKey (autoGenerate = true) var id: Int = 0
 }
