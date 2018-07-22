@@ -49,7 +49,7 @@ class MainActivity : AppCompatActivity() {
         db = App.instance.database
 
         getNotesFromSqlRx(db.getNoteDao().getAllNoteWithOutArchive(),
-                getString(R.string.error_get_notes_from_sql_rx),
+                getString(R.string.notes_sql_empty),
                 getString(R.string.error_get_notes_from_sql_rx))
 
     }
@@ -141,7 +141,7 @@ class MainActivity : AppCompatActivity() {
                             getString(R.string.error_get_notes_from_sql_rx_with_search))
                 } else {
                     getNotesFromSqlRx(db.getNoteDao().getAllNoteWithOutArchive(),
-                            getString(R.string.error_get_notes_from_sql_rx),
+                            getString(R.string.notes_sql_empty),
                             getString(R.string.error_get_notes_from_sql_rx))
                 }
                 return false
@@ -150,7 +150,7 @@ class MainActivity : AppCompatActivity() {
             override fun onQueryTextChange(newText: String): Boolean {
                 if (newText.isEmpty()) {
                     getNotesFromSqlRx(db.getNoteDao().getAllNoteWithOutArchive(),
-                            getString(R.string.error_get_notes_from_sql_rx),
+                            getString(R.string.notes_sql_empty),
                             getString(R.string.error_get_notes_from_sql_rx))
                 } else {
                     getNotesFromSqlRx(db.getNoteDao().getAllNoteWithSearchTextWithOutArchive(newText),
