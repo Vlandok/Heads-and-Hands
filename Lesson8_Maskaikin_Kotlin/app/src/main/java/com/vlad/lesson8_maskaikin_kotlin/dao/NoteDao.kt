@@ -14,7 +14,7 @@ interface NoteDao {
     fun insertAllNote(vararg note: Note)
 
     //Запрос на изменение (Архивирование) Note в бд по id
-    @Query("UPDATE notes SET check_archive = :archive WHERE id LIKE :idNote")
+    @Query("UPDATE notes SET archive = :archive WHERE id LIKE :idNote")
     fun updateArchiveNote(idNote: Int, archive: Boolean)
 
     //Запрос на удаление Note по id
@@ -34,11 +34,11 @@ interface NoteDao {
     fun getNoteId(idNote: Int): Note
 
     // Получение всех Note из бд с уловием ахивирования
-    @Query("SELECT * FROM notes WHERE check_archive LIKE 0")
+    @Query("SELECT * FROM notes WHERE archive LIKE 0")
     fun getAllNoteWithOutArchive(): Flowable<List<Note>>
 
     // Получение всех Note из бд с условием из поиска
-    @Query("SELECT * FROM notes WHERE title LIKE :searchText OR text LIKE :searchText AND check_archive LIKE 0")
+    @Query("SELECT * FROM notes WHERE title LIKE :searchText OR text LIKE :searchText AND archive LIKE 0")
     fun getAllNoteWithSearchTextWithOutArchive(searchText: String): Flowable<List<Note>>
 
 }
