@@ -13,6 +13,8 @@ import com.vlad.lesson8_maskaikin_kotlin.MainActivity.Companion.WHITE_COLOR_HEX
 import com.vlad.lesson8_maskaikin_kotlin.datebase.App
 import io.reactivex.Completable
 import petrov.kristiyan.colorpicker.ColorPicker
+import java.util.*
+
 
 //Экран добавления/редактирования заметок
 class AddNoteActivity : AppCompatActivity() {
@@ -96,30 +98,17 @@ class AddNoteActivity : AppCompatActivity() {
 
     }
 
-    private fun openColorPicker () {
+    private fun openColorPicker() {
         val colorPicker = ColorPicker(this)
-        val colors = ArrayList<String> ()
-        colors.add("#e51c23")
-        colors.add("#e91e63")
-        colors.add("#9c27b0")
-        colors.add("#673ab7")
-        colors.add("#5677fc")
-        colors.add("#02a9f4")
-        colors.add("#00bcd4")
-        colors.add("#009788")
-        colors.add("#8cc34a")
-        colors.add("#cddc38")
-        colors.add("#ffeb3c")
-        colors.add("#fec10a")
-        colors.add("#ff5623")
-        colors.add("#9e9e9e")
-        colors.add("#607d8b")
+        val colors = ArrayList<String>()
+        val stringArrayColors = resources.getStringArray(R.array.colors_array)
+        for (color:String in stringArrayColors) colors.add(color)
 
         colorPicker.setColors(colors)
                 .setColumns(NUM_COLUMNS_COLOR_PICKER)
                 .setRoundColorButton(true)
                 .setTitle(getString(R.string.choose_color_alert))
-                .setOnChooseColorListener(object :ColorPicker.OnChooseColorListener {
+                .setOnChooseColorListener(object : ColorPicker.OnChooseColorListener {
                     override fun onChooseColor(position: Int, color: Int) {
                         backgroundColorNote = colors[position]
                     }
