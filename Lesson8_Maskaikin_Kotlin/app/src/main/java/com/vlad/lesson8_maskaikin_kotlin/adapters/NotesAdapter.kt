@@ -1,6 +1,7 @@
 package com.vlad.lesson8_maskaikin_kotlin.adapters
 
 import android.graphics.Color
+import android.support.v7.widget.CardView
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -13,8 +14,6 @@ import com.vlad.lesson8_maskaikin_kotlin.entity.Note
 
 class NotesAdapter(internal var notes: List<Note>) : RecyclerView.Adapter<NotesAdapter.ViewHolder>() {
 
-
-    private lateinit var viewHolder: ViewHolder
     private lateinit var noteLongListener: OnNoteLongClickListener
     private lateinit var noteListener: OnNoteClickListener
 
@@ -36,8 +35,7 @@ class NotesAdapter(internal var notes: List<Note>) : RecyclerView.Adapter<NotesA
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NotesAdapter.ViewHolder {
         val view: View = LayoutInflater.from(parent.context).inflate(R.layout.card_view_list_note, parent, false)
-        viewHolder = ViewHolder(view, noteLongListener, noteListener)
-        return viewHolder
+        return ViewHolder(view, noteLongListener, noteListener)
     }
 
     override fun getItemCount(): Int {
@@ -45,20 +43,22 @@ class NotesAdapter(internal var notes: List<Note>) : RecyclerView.Adapter<NotesA
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        val viewHolder: ViewHolder = holder
 
-        viewHolder = holder
-        checkNotesOnEmpty(notes[position].text, notes[position].title)
-        checkNotesOnColorBacgroun(position)
+        checkNotesOnEmpty(viewHolder,notes[position].text, notes[position].title)
+        checkNotesOnColorBackground(viewHolder,position)
         viewHolder.textViewTitleNote.text = notes[position].title
         viewHolder.textViewTextNote.text = notes[position].text
-        viewHolder.linearLayoutForNoteInCardView.setBackgroundColor(Color.parseColor(notes[position].backgroundColor))
+       // viewHolder.linearLayoutForNoteInCardView.setBackgroundColor(Color.parseColor(notes[position].backgroundColor))
+        viewHolder.cardViewForNote.setCardBackgroundColor(Color.parseColor(notes[position].backgroundColor))
 
     }
 
     inner class ViewHolder internal constructor(noteView: View, listenerLong: OnNoteLongClickListener?, listener: OnNoteClickListener?) : RecyclerView.ViewHolder(noteView) {
         internal var textViewTitleNote: TextView = noteView.findViewById(R.id.textViewTitleNote)
         internal var textViewTextNote: TextView = noteView.findViewById(R.id.textViewTextNote)
-        internal var linearLayoutForNoteInCardView: LinearLayout = noteView.findViewById(R.id.linearLayoutForNoteInCardView)
+       // internal var linearLayoutForNoteInCardView: LinearLayout = noteView.findViewById(R.id.linearLayoutForNoteInCardView)
+        internal var cardViewForNote: CardView = noteView.findViewById(R.id.cardViewForNote)
 
         init {
 
@@ -66,7 +66,7 @@ class NotesAdapter(internal var notes: List<Note>) : RecyclerView.Adapter<NotesA
                 if (listenerLong != null) {
                     val position = adapterPosition
                     if (position != RecyclerView.NO_POSITION) {
-                        listenerLong.onLongClickNote(notes[position].id)
+                        notes[position].id?.let { it1 -> listenerLong.onLongClickNote(it1) }
                     }
                 }
                 return@setOnLongClickListener true
@@ -76,14 +76,14 @@ class NotesAdapter(internal var notes: List<Note>) : RecyclerView.Adapter<NotesA
                 if (listener != null) {
                     val position = adapterPosition
                     if (position != RecyclerView.NO_POSITION) {
-                        listener.onClickNote(notes[position].id)
+                        notes[position].id?.let { it1 -> listener.onClickNote(it1) }
                     }
                 }
             }
         }
     }
 
-    private fun checkNotesOnEmpty(text: String, title: String) {
+    private fun checkNotesOnEmpty(viewHolder: ViewHolder, text: String, title: String) {
         viewHolder.textViewTitleNote.visibility = View.VISIBLE
         viewHolder.textViewTextNote.visibility = View.VISIBLE
 
@@ -95,7 +95,7 @@ class NotesAdapter(internal var notes: List<Note>) : RecyclerView.Adapter<NotesA
         }
     }
 
-    private fun checkNotesOnColorBacgroun(position: Int) {
+    private fun checkNotesOnColorBackground(viewHolder: ViewHolder, position: Int) {
         viewHolder.textViewTitleNote.setTextColor(Color.WHITE)
         viewHolder.textViewTextNote.setTextColor(Color.WHITE)
         if (notes[position].backgroundColor == WHITE_COLOR_HEX) {

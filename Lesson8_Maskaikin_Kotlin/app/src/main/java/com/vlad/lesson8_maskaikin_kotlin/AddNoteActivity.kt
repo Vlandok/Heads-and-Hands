@@ -4,6 +4,8 @@ import android.content.Context
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.content.Intent
+import android.graphics.Color
+import android.os.Build
 import android.view.Menu
 import com.vlad.lesson8_maskaikin_kotlin.datebase.AppDatabase
 import com.vlad.lesson8_maskaikin_kotlin.entity.Note
@@ -12,6 +14,7 @@ import kotlinx.android.synthetic.main.appbar_with_toolbar.*
 import com.vlad.lesson8_maskaikin_kotlin.MainActivity.Companion.WHITE_COLOR_HEX
 import com.vlad.lesson8_maskaikin_kotlin.datebase.App
 import io.reactivex.Completable
+import io.reactivex.schedulers.Schedulers
 import petrov.kristiyan.colorpicker.ColorPicker
 import java.util.*
 
@@ -67,6 +70,9 @@ class AddNoteActivity : AppCompatActivity() {
         if (idNote != FAIL_GET_ID_EXTRA) {
             note = db.getNoteDao().getNoteId(idNote)
             backgroundColorNote = note.backgroundColor
+            if (backgroundColorNote != WHITE_COLOR_HEX) {
+                setBackgroundColorNote(backgroundColorNote)
+            }
             editTextAddTitleNote.setText(note.title)
             editTextAddTextNote.setText(note.text)
         }
@@ -83,16 +89,17 @@ class AddNoteActivity : AppCompatActivity() {
     }
 
     private fun comeBack() {
-
         text = editTextAddTextNote.text.toString()
         title = editTextAddTitleNote.text.toString()
 
         if (idNote != FAIL_GET_ID_EXTRA) {
             Completable.fromCallable { db.getNoteDao().updateTextAndTitleNote(idNote, text, title, backgroundColorNote) }
+                    .subscribeOn(Schedulers.io())
                     .subscribe()
         } else if (title.isNotEmpty() || text.isNotEmpty()) {
             note = Note(title, text, backgroundColorNote)
             Completable.fromCallable { db.getNoteDao().insertAllNote(note) }
+                    .subscribeOn(Schedulers.io())
                     .subscribe()
         }
 
@@ -102,7 +109,7 @@ class AddNoteActivity : AppCompatActivity() {
         val colorPicker = ColorPicker(this)
         val colors = ArrayList<String>()
         val stringArrayColors = resources.getStringArray(R.array.colors_array)
-        for (color:String in stringArrayColors) colors.add(color)
+        for (color: String in stringArrayColors) colors.add(color)
 
         colorPicker.setColors(colors)
                 .setColumns(NUM_COLUMNS_COLOR_PICKER)
@@ -110,6 +117,7 @@ class AddNoteActivity : AppCompatActivity() {
                 .setTitle(getString(R.string.choose_color_alert))
                 .setOnChooseColorListener(object : ColorPicker.OnChooseColorListener {
                     override fun onChooseColor(position: Int, color: Int) {
+                        setBackgroundColorNote(colors[position])
                         backgroundColorNote = colors[position]
                     }
 
@@ -121,6 +129,15 @@ class AddNoteActivity : AppCompatActivity() {
                 .show()
         colorPicker.positiveButton.text = getText(R.string.ok)
         colorPicker.negativeButton.text = getText(R.string.cancel)
+    }
+
+    private fun setBackgroundColorNote(colorHex: String) {
+        linerLayoutAddNoteParent.setBackgroundColor(Color.parseColor(colorHex))
+        toolbar.setBackgroundColor(Color.parseColor(colorHex))
+        appBarLayout.setBackgroundColor(Color.parseColor(colorHex))
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            window.statusBarColor = Color.parseColor(colorHex)
+        }
     }
 
 }

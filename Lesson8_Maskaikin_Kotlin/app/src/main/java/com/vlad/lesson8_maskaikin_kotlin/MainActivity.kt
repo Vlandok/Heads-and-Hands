@@ -153,7 +153,7 @@ class MainActivity : AppCompatActivity() {
                             getString(R.string.notes_sql_empty),
                             getString(R.string.error_get_notes_from_sql_rx))
                 } else {
-                    getNotesFromSqlRx(db.getNoteDao().getAllNoteWithSearchTextWithOutArchive(newText),
+                    getNotesFromSqlRx(db.getNoteDao().getAllNoteWithSearchTextWithOutArchive("$newText%"),
                             getString(R.string.notes_sql_empty_for_search),
                             getString(R.string.error_get_notes_from_sql_rx_with_search))
                 }

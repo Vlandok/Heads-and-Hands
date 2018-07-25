@@ -10,5 +10,5 @@ class Note(
            @ColumnInfo(name = "text") var text: String,
            @ColumnInfo(name = "background_color") var backgroundColor: String,
            @ColumnInfo(name = "archive") var isArchive: Boolean = false) {
-    @PrimaryKey (autoGenerate = true) var id: Int = 0
+    @PrimaryKey (autoGenerate = true) var id: Int? = null
 }
