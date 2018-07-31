@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Lesson9_Maskaikin_Kotlin</string>
+    <string name="saransk">saransk</string>
+    <string name="load_file">Скачать файл</string>
+    <string name="done">Готово</string>
+    <string name="downloading_file">Скачивание файла</string>
+    <string name="downloading">Загрузка</string>
+</resources>
