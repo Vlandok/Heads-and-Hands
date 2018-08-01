@@ -23,9 +23,7 @@ class GetWeatherLocalService : Service() {
 
     private lateinit var jsonApi: WeatherService
     private lateinit var disposable: Disposable
-    private val getWeatherLocalBinder = GetWeatherLocalBinder()
     private lateinit var serviceCallbacks: ServiceCallbacks
-    private lateinit var timer: Timer
     private var tTask: TimerTask? = null
     private var interval: Long = ONE_MINUTE_IN_MILLISEC.toLong()
 
@@ -39,28 +37,27 @@ class GetWeatherLocalService : Service() {
     }
 
     interface ServiceCallbacks {
-        fun getTemperature(temperature: Double?)
+        fun showTemperature(temperature: Double?)
     }
 
     override fun onCreate() {
         Log.d(MY_LOG, "создался")
+        val retrofit = RetrofitGetWeather.instance()
+        jsonApi = retrofit.create(WeatherService::class.java)
+        val timer = Timer()
+        schedule(timer)
         super.onCreate()
     }
 
     override fun onBind(p0: Intent?): IBinder {
         Log.d(MY_LOG, "Бинд!")
-
-        val retrofit = RetrofitGetWeather.instance()
-        jsonApi = retrofit.create(WeatherService::class.java)
-        timer = Timer()
-        schedule()
-
-        return getWeatherLocalBinder
+        return GetWeatherLocalBinder()
     }
 
     override fun onDestroy() {
         Log.d(MY_LOG, "destroy")
         disposable.dispose()
+        tTask?.cancel()
         super.onDestroy()
     }
 
@@ -68,35 +65,36 @@ class GetWeatherLocalService : Service() {
         serviceCallbacks = callbacks
     }
 
-
     inner class GetWeatherLocalBinder : Binder() {
         fun getService(): GetWeatherLocalService {
             return this@GetWeatherLocalService
         }
     }
 
-    fun schedule() {
+    private fun schedule(timer: Timer) {
         if (tTask != null) {
-            tTask!!.cancel()
+            tTask?.cancel()
         }
         if (interval > 0) {
             tTask = object : TimerTask() {
                 override fun run() {
                     Log.d(MY_LOG, "run")
 
-
                     disposable = jsonApi.getWeather(getString(R.string.saransk), UNITS, WEATHER_MAPS_APP_ID)
                             .subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread())
                             .subscribe({ weather ->
-                                serviceCallbacks.getTemperature(weather.main?.temp)
+                                if (weather == null){
+                                    serviceCallbacks.showTemperature(MainActivity.DEFAULT_VALUE.toDouble())
+                                } else {
+                                    serviceCallbacks.showTemperature(weather.main?.temp)
+                                }
 
                                 Log.d(MY_LOG, "получили темпеературу")
                             },
                                     { exception ->
-                                        Log.e(MY_LOG, "error", exception)
+                                        exception.printStackTrace()
                                     })
-
 
                 }
             }

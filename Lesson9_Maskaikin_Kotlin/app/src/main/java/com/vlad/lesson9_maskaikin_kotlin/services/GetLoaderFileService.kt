@@ -28,7 +28,6 @@ import java.util.zip.ZipInputStream
 class GetLoaderFileService : Service() {
 
     private lateinit var disposable: Disposable
-    private val getLoaderFileBinder = GetLoaderFileBinder()
     private lateinit var notificationManager: NotificationManager
     private lateinit var path: String
 
@@ -49,7 +48,7 @@ class GetLoaderFileService : Service() {
 
     override fun onCreate() {
         Log.d(MY_LOG, "onCreate")
-        notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+
         super.onCreate()
     }
 
@@ -59,8 +58,7 @@ class GetLoaderFileService : Service() {
 
         val urlToDownload = intent?.getStringExtra(MainActivity.URL_CONST)
 
-        val intentBroadcastReceiver = Intent()
-        intentBroadcastReceiver.action = MainActivity.BROADCAST_ACTION
+        val intentBroadcastReceiver = Intent(MainActivity.BROADCAST_ACTION)
 
         disposable = Single.fromCallable<Any> {
             unpackZip(downloadFile(urlToDownload, intentBroadcastReceiver), FILENAME)
@@ -79,9 +77,9 @@ class GetLoaderFileService : Service() {
         return START_REDELIVER_INTENT
     }
 
-    override fun onBind(intent: Intent?): IBinder {
+    override fun onBind(intent: Intent?): IBinder? {
         Log.d(MY_LOG, "on Bind ")
-        return getLoaderFileBinder
+        return null
     }
 
     override fun onDestroy() {
@@ -89,8 +87,6 @@ class GetLoaderFileService : Service() {
         disposable.dispose()
         super.onDestroy()
     }
-
-    inner class GetLoaderFileBinder : Binder()
 
     private fun downloadFile(urlFile: String?, intentBroadcastReceiver: Intent): String {
         try {
@@ -128,6 +124,7 @@ class GetLoaderFileService : Service() {
     private fun showNotification() {
 
         val text = getText(R.string.downloading_file)
+        notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
 
         val contentIntent = PendingIntent.getActivity(this, 0,
                 Intent(this, MainActivity::class.java), 0)

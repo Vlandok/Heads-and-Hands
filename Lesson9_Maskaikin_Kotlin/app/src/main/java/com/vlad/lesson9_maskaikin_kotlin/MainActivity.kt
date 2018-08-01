@@ -22,6 +22,7 @@ import java.io.FileInputStream
 class MainActivity : AppCompatActivity(), GetWeatherLocalService.ServiceCallbacks {
 
     private var getWeatherService = GetWeatherLocalService()
+    private lateinit var broadCastReceiver : BroadcastReceiver
 
     companion object {
         const val RETROFIT_GET_WEATHER_BASE_URL = "http://api.openweathermap.org/data/2.5/"
@@ -42,7 +43,9 @@ class MainActivity : AppCompatActivity(), GetWeatherLocalService.ServiceCallback
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val broadCastReceiver = object : BroadcastReceiver() {
+        bindService(GetWeatherLocalService.createStartService(this), mConnection, Context.BIND_AUTO_CREATE)
+
+        broadCastReceiver = object : BroadcastReceiver() {
             override fun onReceive(contxt: Context, intent: Intent?) {
 
                 val progress = intent?.getIntExtra(GetLoaderFileService.UPDATE_PROGRESS, DEFAULT_VALUE)
@@ -72,15 +75,11 @@ class MainActivity : AppCompatActivity(), GetWeatherLocalService.ServiceCallback
         LocalBroadcastManager.getInstance(this).registerReceiver(broadCastReceiver, IntentFilter(BROADCAST_ACTION))
     }
 
-    override fun onStart() {
-        super.onStart()
-        bindService(GetWeatherLocalService.createStartService(this), mConnection, Context.BIND_AUTO_CREATE)
-    }
-
     override fun onDestroy() {
         super.onDestroy()
-        unbindService(mConnection)
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(broadCastReceiver)
     }
+
 
     private val mConnection = object : ServiceConnection {
 
@@ -98,9 +97,13 @@ class MainActivity : AppCompatActivity(), GetWeatherLocalService.ServiceCallback
         }
     }
 
-    override fun getTemperature(temperature: Double?) {
+    override fun showTemperature(temperature: Double?) {
         Log.d(MY_LOG, "Установили погоду")
-        textViewTemperature.text = "${temperature?.toInt()}$CELSIUS"
+        if (temperature == DEFAULT_VALUE.toDouble()) {
+            textViewTemperature.text = "Не получилось получить температуру"
+        } else {
+            textViewTemperature.text = "${temperature?.toInt()}$CELSIUS"
+        }
         progressBarGetWeather.visibility = View.GONE
     }
 
