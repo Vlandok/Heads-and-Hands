@@ -2,6 +2,7 @@ package com.vlad.lesson7_maskaikin_kotlin.adapters
 
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -11,10 +12,13 @@ import android.widget.TextView
 import com.vlad.lesson7_maskaikin_kotlin.R
 import com.vlad.lesson7_maskaikin_kotlin.getBridge.Object
 import com.vlad.lesson7_maskaikin_kotlin.getBridge.ResultBridge
+import com.vlad.lesson7_maskaikin_kotlin.getImageStatusAlarm
+import com.vlad.lesson7_maskaikin_kotlin.getImageStatusBridge
+import com.vlad.lesson7_maskaikin_kotlin.getTimeCloseBridge
 import java.text.SimpleDateFormat
 
 
-class RVAdapter(internal var bridges: ResultBridge, var idBridge : Int?, var checkAlarm: Boolean?)
+class RVAdapter(internal var bridges: ResultBridge)
     : RecyclerView.Adapter<RVAdapter.ViewHolder>() {
 
     private lateinit var viewHolder: ViewHolder
@@ -28,7 +32,7 @@ class RVAdapter(internal var bridges: ResultBridge, var idBridge : Int?, var che
         @SuppressLint("SimpleDateFormat")
         val formatterMinute = SimpleDateFormat("mm")
 
-       const val ONE_HOUR_IN_MINUTE = 60
+        const val ONE_HOUR_IN_MINUTE = 60
 
     }
 
@@ -52,11 +56,11 @@ class RVAdapter(internal var bridges: ResultBridge, var idBridge : Int?, var che
     override fun onBindViewHolder(holder: RVAdapter.ViewHolder, position: Int) {
 
         viewHolder = holder
-
-        viewHolder.imageViewStatusBridge.setBackgroundResource(getImageStatusBridge(position))
-        viewHolder.textViewNameBridge.text = bridges.objects?.get(position)?.name?.replace(" мост","")?.replace("Мост ","")
-        viewHolder.textViewCloseTimeBridge.text = getTimeCloseBridge(position)
-        viewHolder.imageViewStatusAlarm.setBackgroundResource(getImageStatusAlarm(bridges.objects?.get(position),idBridge, checkAlarm))
+        val bridge = bridges.objects?.get(position)
+        viewHolder.imageViewStatusBridge.setBackgroundResource(getImageStatusBridge(position, bridges))
+        viewHolder.textViewNameBridge.text = bridge?.name?.replace(" мост", "")?.replace("Мост ", "")
+        viewHolder.textViewCloseTimeBridge.text = getTimeCloseBridge(position, bridge)
+        viewHolder.imageViewStatusAlarm.setBackgroundResource(getImageStatusAlarm(bridge))
 
     }
 
@@ -84,67 +88,5 @@ class RVAdapter(internal var bridges: ResultBridge, var idBridge : Int?, var che
         }
     }
 
-    private fun getTimeCloseBridge(position: Int): String {
-
-        val getDivorceSize = bridges.objects?.get(position)?.divorces?.size
-        var index = 0
-        var divorse = ""
-
-        while (index < getDivorceSize!!) {
-            divorse = formatter.format(bridges.objects?.get(position)?.divorces?.get(index)?.start) +
-                    " - " + formatter.format(bridges.objects?.get(position)?.divorces?.get(index)?.end) + "  $divorse"
-            index++
-        }
-        return divorse
-    }
-
-    private fun getImageStatusAlarm (bridge: Object?, idBridge: Int?, checkAlarm: Boolean?) :Int {
-
-        var imageStatusAlarm :Int
-
-                if (bridge?.id == idBridge && checkAlarm == true) {
-                    bridge?.checkAlarm = true
-                    imageStatusAlarm = R.drawable.ic_kolocol_on
-                } else {
-                    imageStatusAlarm = R.drawable.ic_kolocol_off
-                }
-        return imageStatusAlarm
-    }
-
-    private fun getImageStatusBridge(position: Int) :Int {
-
-        val getTimeNow = System.currentTimeMillis()
-        val timeNowForrmatedHour = formatterHour.format(getTimeNow).toInt()
-        val timeNowForrmatedMinute = formatterMinute.format(getTimeNow).toInt()
-
-        val timeNowInMinute = timeNowForrmatedHour * ONE_HOUR_IN_MINUTE + timeNowForrmatedMinute
-
-        val getDivorceSize = bridges.objects?.get(position)?.divorces?.size
-        var index = 0
-        var resultImg: Int = -1
-
-        while (index < getDivorceSize!!) {
-
-            val startTimeCloseBridgeHour = formatterHour.format(bridges.objects?.get(position)?.divorces?.get(index)?.start).toInt()
-            val endTimeCloseBridgeHour = formatterHour.format(bridges.objects?.get(position)?.divorces?.get(index)?.end).toInt()
-            val startTimeCloseBridgeMinute = formatterMinute.format(bridges.objects?.get(position)?.divorces?.get(index)?.start).toInt()
-            val endTimeCloseBridgeMinute = formatterMinute.format(bridges.objects?.get(position)?.divorces?.get(index)?.end).toInt()
-
-            val startTimeCloseBridgeInMinute = startTimeCloseBridgeHour * ONE_HOUR_IN_MINUTE  + startTimeCloseBridgeMinute
-            val endTimeCloseBridgeInMinute = endTimeCloseBridgeHour * ONE_HOUR_IN_MINUTE + endTimeCloseBridgeMinute
-
-            if (timeNowInMinute in startTimeCloseBridgeInMinute..endTimeCloseBridgeInMinute) {
-                resultImg =R.drawable.ic_brige_late
-                break
-            } else if (timeNowInMinute + ONE_HOUR_IN_MINUTE in startTimeCloseBridgeInMinute..endTimeCloseBridgeInMinute) {
-                resultImg = R.drawable.ic_brige_soon
-                break
-            } else {
-                resultImg = R.drawable.ic_brige_normal
-            }
-            index++
-        }
-        return resultImg
-    }
 }
 

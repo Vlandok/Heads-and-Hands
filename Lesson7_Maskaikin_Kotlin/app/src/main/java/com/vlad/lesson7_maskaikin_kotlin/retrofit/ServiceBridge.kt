@@ -7,8 +7,8 @@ import retrofit2.http.GET
 
 interface ServiceBridge {
 
-    @get:GET("api/v1/bridges/?format=json")
-    val bridges : Single<ResultBridge>
+    @GET("api/v1/bridges/?format=json")
+    fun bridges() : Single<ResultBridge>
 
 
 }

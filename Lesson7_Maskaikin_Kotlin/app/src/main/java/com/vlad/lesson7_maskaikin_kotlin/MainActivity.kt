@@ -4,21 +4,23 @@ import android.annotation.SuppressLint
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentTransaction
 import android.support.v7.widget.Toolbar
 import android.view.Menu
 import android.view.MenuItem
-import com.vlad.lesson7_maskaikin_kotlin.fragments.FragmentList
-import com.vlad.lesson7_maskaikin_kotlin.fragments.FragmentMap
+import com.vlad.lesson7_maskaikin_kotlin.fragments.FragmentViewListBridge
+import com.vlad.lesson7_maskaikin_kotlin.fragments.FragmentViewMapBridge
 import kotlinx.android.synthetic.main.activity_main.*
 import android.support.design.widget.Snackbar
-
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var fragmentTransaction: FragmentTransaction
     private lateinit var myToolbar: Toolbar
+
+    companion object {
+        const val MY_LOG = "My_Log"
+    }
 
     @SuppressLint("ResourceType")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -29,21 +31,20 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(myToolbar)
         val myFragmentManager = supportFragmentManager
 
-        val checkAlarm = intent.getBooleanExtra(Activity2.CHECK_ALARM, false)
-        val idBridge = intent.getIntExtra(Activity2.ID_BRIDGE, -1)
-        val text = intent.getStringExtra(Activity2.TEXT_FOR_VIEW_ALARM)
+        val checkAlarm = intent.getBooleanExtra(InfoSetReminderActivity.CHECK_ALARM, false)
+        val idBridge = intent.getIntExtra(InfoSetReminderActivity.ID_BRIDGE, -1)
 
 
-        if (checkAlarm) {
-            showSnackbar("Напоминание установленно!")
-            myFragmentManager.beginTransaction().replace(R.id.container, FragmentList.getInstance(idBridge, checkAlarm, text)).commit()
-
-        } else if (idBridge != -1) {
-            showSnackbar("Напоминание отменено!")
-            myFragmentManager.beginTransaction().replace(R.id.container, FragmentList.getInstance(idBridge, checkAlarm, text)).commit()
-        }
-        else {
-            myFragmentManager.beginTransaction().replace(R.id.container, FragmentList.getInstance()).commit()
+        when {
+            checkAlarm -> {
+                showSnackbar(getString(R.string.reminder_set))
+                myFragmentManager.beginTransaction().replace(R.id.container, FragmentViewListBridge.getInstance()).commit()
+            }
+            idBridge != -1 -> {
+                showSnackbar(getString(R.string.reminder_cancel))
+                myFragmentManager.beginTransaction().replace(R.id.container, FragmentViewListBridge.getInstance()).commit()
+            }
+            else -> myFragmentManager.beginTransaction().replace(R.id.container, FragmentViewListBridge.getInstance()).commit()
         }
 
         myToolbar.setOnMenuItemClickListener { item ->
@@ -52,15 +53,10 @@ class MainActivity : AppCompatActivity() {
 
             when (item.itemId) {
                 R.id.map_menu -> {
-                    loadFragment(item, FragmentMap.getInstance(), R.id.list_menu)
-
+                        loadFragment(item, FragmentViewMapBridge.getInstance(), R.id.list_menu)
                 }
                 R.id.list_menu -> {
-                    if (checkAlarm) {
-                        loadFragment(item, FragmentList.getInstance(idBridge, checkAlarm, text), R.id.map_menu)
-                    } else {
-                        loadFragment(item, FragmentList.getInstance(), R.id.map_menu)
-                    }
+                        loadFragment(item, FragmentViewListBridge.getInstance(), R.id.map_menu)
                 }
             }
             fragmentTransaction.commit()
@@ -76,7 +72,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showSnackbar (text: String){
-        val snackbarAlert = Snackbar.make(linearLayout, text, Snackbar.LENGTH_LONG)
+        val snackbarAlert = Snackbar.make(linerLayoutMainActivityParent, text, Snackbar.LENGTH_LONG)
         snackbarAlert.show()
     }
 
