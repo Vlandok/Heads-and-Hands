@@ -16,7 +16,7 @@ fun getLatBridges(bridges: ResultBridge, countBridge: Int?): DoubleArray? {
     if (countBridge != null) {
         var i = 0
         while (i < countBridge) {
-            lat?.set(i, bridges.objects!![i].lat!!.toDouble())
+            bridges.objects?.get(i)?.lat?.let { lat?.set(i, it) }
             i++
         }
     }
@@ -36,15 +36,15 @@ fun getLngBridges(bridges: ResultBridge, countBridge: Int?): DoubleArray? {
     return lng
 }
 
-fun getTimeCloseBridge(position: Int, bridge: Object?): String {
+fun getTimeCloseBridge(bridge: Object?): String {
 
     val getDivorceSize = bridge?.divorces?.size
     var index = 0
     var divorse = ""
 
     while (index < getDivorceSize!!) {
-        divorse = RVAdapter.formatter.format(bridge?.divorces?.get(index)?.start) +
-                " - " + RVAdapter.formatter.format(bridge?.divorces?.get(index)?.end) + "  $divorse"
+        divorse = RVAdapter.formatter.format(bridge.divorces?.get(index)?.start) +
+                " - " + RVAdapter.formatter.format(bridge.divorces?.get(index)?.end) + "  $divorse"
         index++
     }
     return divorse
@@ -130,34 +130,6 @@ fun getImageStatusBridgeForMap(position: Int, bridges: ResultBridge): Int {
     }
     return resultImg
 }
-
-
-fun getTimeCloseBridge(bridge: Object): String {
-    var index = 0
-    var divorse = ""
-
-    while (index < bridge.divorces?.size ?: 1) {
-        divorse = RVAdapter.formatter.format(bridge.divorces?.get(index)?.start) +
-                " - " + RVAdapter.formatter.format(bridge.divorces?.get(index)?.end) + "  $divorse"
-        index++
-    }
-    return divorse
-}
-
-fun getTextForTextViewSetAlarm(timeInMinute: Int): String {
-    val hour = timeInMinute / InfoSetReminderActivity.ONE_HOUR_IN_MINUTE
-    val minute: Int = timeInMinute % InfoSetReminderActivity.ONE_HOUR_IN_MINUTE
-    val text: String
-    if (hour >= 2) {
-        text = "За $hour часа $minute мин"
-    } else if (hour in 1..2) {
-        text = "За $hour час $minute мин"
-    } else {
-        text = "За $timeInMinute минут"
-    }
-    return text
-}
-
 
 //Метод получает, сколько миллисекунд осталось с этого времени до разводки моста
 fun getTimeBeforeStart(bridge: Object): Int {

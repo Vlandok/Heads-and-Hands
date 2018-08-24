@@ -59,7 +59,7 @@ class RVAdapter(internal var bridges: ResultBridge)
         val bridge = bridges.objects?.get(position)
         viewHolder.imageViewStatusBridge.setBackgroundResource(getImageStatusBridge(position, bridges))
         viewHolder.textViewNameBridge.text = bridge?.name?.replace(" мост", "")?.replace("Мост ", "")
-        viewHolder.textViewCloseTimeBridge.text = getTimeCloseBridge(position, bridge)
+        viewHolder.textViewCloseTimeBridge.text = getTimeCloseBridge(bridge)
         viewHolder.imageViewStatusAlarm.setBackgroundResource(getImageStatusAlarm(bridge))
 
     }

@@ -29,11 +29,6 @@ import com.vlad.lesson7_maskaikin_kotlin.*
 import com.vlad.lesson7_maskaikin_kotlin.R
 import com.vlad.lesson7_maskaikin_kotlin.getBridge.Object
 import com.vlad.lesson7_maskaikin_kotlin.getBridge.ResultBridge
-import com.vlad.lesson7_maskaikin_kotlin.retrofit.RetrofitClient
-import com.vlad.lesson7_maskaikin_kotlin.retrofit.ServiceBridge
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposable
-import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.bridge_view.*
 import kotlinx.android.synthetic.main.fragment_view_map_bridge.*
 
@@ -41,11 +36,16 @@ import kotlinx.android.synthetic.main.fragment_view_map_bridge.*
 class FragmentViewMapBridge : Fragment(), OnMapReadyCallback {
 
     private lateinit var mMap: GoogleMap
-    private lateinit var jsonApi: ServiceBridge
-    private var disposable: Disposable? = null
     private var idBridge: Int? = -1
     private var checkAlarm: Boolean? = false
     private var textRemind: String? = null
+
+    private lateinit var locationRequest: LocationRequest
+    private lateinit var lastLocation: Location
+    private var currLocationMarker: Marker? = null
+    private var locationLatLng: LatLng? = null
+    private var fusedLocationProviderClient: FusedLocationProviderClient? = null
+    private var bridges: ResultBridge? = null
 
     companion object {
 
@@ -53,17 +53,33 @@ class FragmentViewMapBridge : Fragment(), OnMapReadyCallback {
         const val LAT_SANKT_PERETSBURG = 59.9358148
         const val LNG_SANKT_PERETSBURG = 30.3284948
 
-
-        private lateinit var locationRequest: LocationRequest
-        private lateinit var lastLocation: Location
-        private var currLocationMarker: Marker? = null
-        private var locationLatLng : LatLng? = null
-        private var fusedLocationProviderClient: FusedLocationProviderClient? = null
         private val sanktPetersburg = LatLng(LAT_SANKT_PERETSBURG, LNG_SANKT_PERETSBURG)
 
 
-        fun getInstance(): FragmentViewMapBridge {
-            return FragmentViewMapBridge()
+        fun getInstance(bridges: ResultBridge?): FragmentViewMapBridge {
+
+            val fragmentViewMapBridge = FragmentViewMapBridge()
+            val arguments = Bundle()
+            arguments.putParcelable(FragmentViewListBridge.ARGUMENT_BRIDGES, bridges)
+            fragmentViewMapBridge.arguments = arguments
+            return fragmentViewMapBridge
+        }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        if (arguments?.getParcelable<ResultBridge>(FragmentViewListBridge.ARGUMENT_BRIDGES)?.objects?.isNotEmpty() != null) {
+            Log.d(MY_LOG, "Получилось")
+            bridges = arguments!!.getParcelable(FragmentViewListBridge.ARGUMENT_BRIDGES)
+        } else {
+            val snackbarError = Snackbar.make(constraintLayoutFragmentMapParent,
+                    R.string.errorGetBridgesFromRx,
+                    Snackbar.LENGTH_INDEFINITE)
+                    .setAction(getText(R.string.yes)) {
+                        onCreate(savedInstanceState)
+                    }
+            snackbarError.show()
         }
     }
 
@@ -83,13 +99,13 @@ class FragmentViewMapBridge : Fragment(), OnMapReadyCallback {
 
         val permissionStatus = context?.let { ContextCompat.checkSelfPermission(it, Manifest.permission.ACCESS_FINE_LOCATION) }
         if (permissionStatus == PackageManager.PERMISSION_DENIED) {
+            imageViewLocation.visibility = View.INVISIBLE
             shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)
             requestPermissions(Array(1) { Manifest.permission.ACCESS_FINE_LOCATION },
                     REQUEST_CODE_PERMISSION_FINE_LOCATION)
-            imageViewLocation.visibility = View.GONE
         } else {
-            fusedLocationProviderClient?.requestLocationUpdates(locationRequest, locationCallback, Looper.myLooper())
             imageViewLocation.visibility = View.VISIBLE
+            fusedLocationProviderClient?.requestLocationUpdates(locationRequest, locationCallback, Looper.myLooper())
         }
 
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sanktPetersburg, 12f))
@@ -97,7 +113,25 @@ class FragmentViewMapBridge : Fragment(), OnMapReadyCallback {
             bridgeViewInFragmenWithMap.visibility = View.GONE
         }
 
-        loadBridgeDisposableForMapFragment()
+        val countBridge = bridges?.objects?.size
+        if (countBridge != null) {
+            Log.d(MY_LOG, "не равно нулю число")
+            bridges?.let { checkAlarmBridge(it, context) }
+            bridges?.let { setMarkersBridge(it, countBridge) }
+            mMap.setOnMarkerClickListener { marker ->
+                if (marker.tag != null) {
+                    val positionBridge = marker.tag as Int
+                    bridges?.let { showBottomViewBridge(it, positionBridge) }
+                    bridgeViewInFragmenWithMap.setOnClickListener {
+                        startInfoSetReminderActivity(bridges?.objects!![positionBridge])
+                    }
+                } else {
+                    bridgeViewInFragmenWithMap.visibility = View.GONE
+                }
+                true
+            }
+        }
+
 
         imageViewLocation.setOnClickListener {
             startGetLocation()
@@ -164,9 +198,6 @@ class FragmentViewMapBridge : Fragment(), OnMapReadyCallback {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
 
-        val retrofit = RetrofitClient.instance
-        jsonApi = retrofit.create(ServiceBridge::class.java)
-
         val view = inflater.inflate(R.layout.fragment_view_map_bridge, container, false)
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(view.context)
         val mapFragment = childFragmentManager.findFragmentById(R.id.fragmentGoogleMap)
@@ -188,11 +219,13 @@ class FragmentViewMapBridge : Fragment(), OnMapReadyCallback {
         }
     }
 
-    private fun setMarkersBridge(bridges: ResultBridge, latBridges: DoubleArray?, lngBridges: DoubleArray?, countBridge: Int) {
+    private fun setMarkersBridge(bridges: ResultBridge, countBridge: Int) {
 
         var position = 0
         while (position < countBridge) {
-            val bridgePosition = latBridges?.get(position)?.let { lngBridges?.get(position)?.let { it1 -> LatLng(it, it1) } }
+            val lat = bridges.objects?.get(position)?.lat
+            val lng = bridges.objects?.get(position)?.lng
+            val bridgePosition = lat?.let { lng?.let { it1 -> LatLng(it, it1) } }
             val icon: BitmapDescriptor = BitmapDescriptorFactory.fromResource(getImageStatusBridgeForMap(position, bridges))
             val markerBridge: Marker = mMap.addMarker(bridgePosition?.let { MarkerOptions().position(it) })
             markerBridge.tag = position
@@ -211,7 +244,7 @@ class FragmentViewMapBridge : Fragment(), OnMapReadyCallback {
         imageViewStatusBridge.setBackgroundResource(getImageStatusBridge(positionBridge, bridges))
         textViewNameBridge.text = bridge.name?.replace(getString(R.string.replace_Bridge), getString(R.string.replace_empty))
                 ?.replace(getString(R.string.replace_bridge), getString(R.string.replace_empty))
-        textViewCloseTimeBridge.text = getTimeCloseBridge(positionBridge, bridge)
+        textViewCloseTimeBridge.text = getTimeCloseBridge(bridge)
         if (bridge.checkAlarm) {
             imageViewStatusAlarm.setBackgroundResource(R.drawable.ic_kolocol_on)
         } else {
@@ -224,11 +257,6 @@ class FragmentViewMapBridge : Fragment(), OnMapReadyCallback {
         val intent = Intent(activity, InfoSetReminderActivity::class.java)
         intent.putExtra(FragmentViewListBridge.BRIDGE, bridge)
         startActivity(intent)
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        disposable?.dispose()
     }
 
     private fun startGetLocation() {
@@ -250,48 +278,48 @@ class FragmentViewMapBridge : Fragment(), OnMapReadyCallback {
         locationRequest.priority = LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY
     }
 
-    private fun loadBridgeDisposableForMapFragment() {
-
-        disposable = jsonApi.bridges()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                        { bridges ->
-                            val countBridge = bridges.objects?.size
-                            if (countBridge != null) {
-                                Log.d(MY_LOG, "не равно нулю число")
-                                checkAlarmBridge(bridges, context)
-                                val latBridges = getLatBridges(bridges, countBridge)
-                                val lngBridges = getLngBridges(bridges, countBridge)
-                                setMarkersBridge(bridges, latBridges, lngBridges, countBridge)
-                                mMap.setOnMarkerClickListener { marker ->
-                                    if (marker.tag != null) {
-                                        val positionBridge = marker.tag as Int
-                                        showBottomViewBridge(bridges, positionBridge)
-                                        bridgeViewInFragmenWithMap.setOnClickListener {
-                                            startInfoSetReminderActivity(bridges.objects!![positionBridge])
-                                        }
-                                    } else {
-                                        bridgeViewInFragmenWithMap.visibility = View.GONE
-                                    }
-                                    true
-                                }
-                            }
-                        },
-                        { exception ->
-                            exception.printStackTrace()
-                            val snackbarError = Snackbar.make(constraintLayoutFragmentMapParent,
-                                    R.string.errorGetBridgesFromRx,
-                                    Snackbar.LENGTH_INDEFINITE)
-                                    .setAction(getText(R.string.yes)) {
-                                        loadBridgeDisposableForMapFragment()
-                                    }
-                            snackbarError.show()
-
-                        }
-                )
-
-    }
+//    private fun loadBridgeDisposableForMapFragment() {
+//
+//        disposable = jsonApi.bridges()
+//                .subscribeOn(Schedulers.io())
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .subscribe(
+//                        { bridges ->
+//                            val countBridge = bridges.objects?.size
+//                            if (countBridge != null) {
+//                                Log.d(MY_LOG, "не равно нулю число")
+//                                checkAlarmBridge(bridges, context)
+////                                val latBridges = getLatBridges(bridges, countBridge)
+////                                val lngBridges = getLngBridges(bridges, countBridge)
+//                                setMarkersBridge(bridges, countBridge)
+//                                mMap.setOnMarkerClickListener { marker ->
+//                                    if (marker.tag != null) {
+//                                        val positionBridge = marker.tag as Int
+//                                        showBottomViewBridge(bridges, positionBridge)
+//                                        bridgeViewInFragmenWithMap.setOnClickListener {
+//                                            startInfoSetReminderActivity(bridges.objects!![positionBridge])
+//                                        }
+//                                    } else {
+//                                        bridgeViewInFragmenWithMap.visibility = View.GONE
+//                                    }
+//                                    true
+//                                }
+//                            }
+//                        },
+//                        { exception ->
+//                            exception.printStackTrace()
+//                            val snackbarError = Snackbar.make(constraintLayoutFragmentMapParent,
+//                                    R.string.errorGetBridgesFromRx,
+//                                    Snackbar.LENGTH_INDEFINITE)
+//                                    .setAction(getText(R.string.yes)) {
+//                                        loadBridgeDisposableForMapFragment()
+//                                    }
+//                            snackbarError.show()
+//
+//                        }
+//                )
+//
+//    }
 
 }
 

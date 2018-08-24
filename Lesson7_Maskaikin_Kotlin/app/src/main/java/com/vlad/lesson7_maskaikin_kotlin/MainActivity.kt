@@ -12,11 +12,22 @@ import com.vlad.lesson7_maskaikin_kotlin.fragments.FragmentViewListBridge
 import com.vlad.lesson7_maskaikin_kotlin.fragments.FragmentViewMapBridge
 import kotlinx.android.synthetic.main.activity_main.*
 import android.support.design.widget.Snackbar
+import android.support.v4.app.FragmentManager
+import android.util.Log
+import com.vlad.lesson7_maskaikin_kotlin.getBridge.ResultBridge
+import com.vlad.lesson7_maskaikin_kotlin.retrofit.RetrofitClient
+import com.vlad.lesson7_maskaikin_kotlin.retrofit.ServiceBridge
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
+import io.reactivex.schedulers.Schedulers
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var fragmentTransaction: FragmentTransaction
     private lateinit var myToolbar: Toolbar
+    private lateinit var jsonApi: ServiceBridge
+    private var disposable: Disposable? = null
+    private var bridges: ResultBridge? = null
 
     companion object {
         const val MY_LOG = "My_Log"
@@ -27,25 +38,32 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        myToolbar = findViewById (R.id.toolbar)
+        val retrofit = RetrofitClient.instance
+        jsonApi = retrofit.create(ServiceBridge::class.java)
+
+
+
+        myToolbar = findViewById(R.id.toolbar)
         setSupportActionBar(myToolbar)
         val myFragmentManager = supportFragmentManager
 
         val checkAlarm = intent.getBooleanExtra(InfoSetReminderActivity.CHECK_ALARM, false)
         val idBridge = intent.getIntExtra(InfoSetReminderActivity.ID_BRIDGE, -1)
 
+        loadBridgeDisposable(myFragmentManager,checkAlarm,idBridge)
 
-        when {
-            checkAlarm -> {
-                showSnackbar(getString(R.string.reminder_set))
-                myFragmentManager.beginTransaction().replace(R.id.container, FragmentViewListBridge.getInstance()).commit()
-            }
-            idBridge != -1 -> {
-                showSnackbar(getString(R.string.reminder_cancel))
-                myFragmentManager.beginTransaction().replace(R.id.container, FragmentViewListBridge.getInstance()).commit()
-            }
-            else -> myFragmentManager.beginTransaction().replace(R.id.container, FragmentViewListBridge.getInstance()).commit()
-        }
+
+//        when {
+//            checkAlarm -> {
+//                showSnackbar(getString(R.string.reminder_set))
+//                myFragmentManager.beginTransaction().replace(R.id.container, FragmentViewListBridge.getInstance(bridges)).commit()
+//            }
+//            idBridge != -1 -> {
+//                showSnackbar(getString(R.string.reminder_cancel))
+//                myFragmentManager.beginTransaction().replace(R.id.container, FragmentViewListBridge.getInstance(bridges)).commit()
+//            }
+//            else -> myFragmentManager.beginTransaction().replace(R.id.container, FragmentViewListBridge.getInstance(bridges)).commit()
+//        }
 
         myToolbar.setOnMenuItemClickListener { item ->
 
@@ -53,10 +71,10 @@ class MainActivity : AppCompatActivity() {
 
             when (item.itemId) {
                 R.id.map_menu -> {
-                        loadFragment(item, FragmentViewMapBridge.getInstance(), R.id.list_menu)
+                    loadFragment(item, FragmentViewMapBridge.getInstance(bridges), R.id.list_menu)
                 }
                 R.id.list_menu -> {
-                        loadFragment(item, FragmentViewListBridge.getInstance(), R.id.map_menu)
+                    loadFragment(item, FragmentViewListBridge.getInstance(bridges), R.id.map_menu)
                 }
             }
             fragmentTransaction.commit()
@@ -71,7 +89,7 @@ class MainActivity : AppCompatActivity() {
         return true
     }
 
-    private fun showSnackbar (text: String){
+    private fun showSnackbar(text: String) {
         val snackbarAlert = Snackbar.make(linerLayoutMainActivityParent, text, Snackbar.LENGTH_LONG)
         snackbarAlert.show()
     }
@@ -82,6 +100,28 @@ class MainActivity : AppCompatActivity() {
         item.isVisible = false
         myToolbar.menu.findItem(itemIdVisible).isVisible = true
 
+    }
+
+    private fun loadBridgeDisposable(myFragmentManager: FragmentManager , checkAlarm : Boolean , idBridge : Int) {
+        disposable = jsonApi.bridges()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe { loadBridges -> bridges = loadBridges
+                    Log.d(MY_LOG, bridges.toString())
+
+                    when {
+                        checkAlarm -> {
+                            showSnackbar(getString(R.string.reminder_set))
+                            myFragmentManager.beginTransaction().replace(R.id.container, FragmentViewListBridge.getInstance(bridges)).commit()
+                        }
+                        idBridge != -1 -> {
+                            showSnackbar(getString(R.string.reminder_cancel))
+                            myFragmentManager.beginTransaction().replace(R.id.container, FragmentViewListBridge.getInstance(bridges)).commit()
+                        }
+                        else -> myFragmentManager.beginTransaction().replace(R.id.container, FragmentViewListBridge.getInstance(bridges)).commit()
+                    }
+
+                }
     }
 }
 

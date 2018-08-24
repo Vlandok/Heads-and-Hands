@@ -6,47 +6,66 @@ import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.vlad.lesson7_maskaikin_kotlin.InfoSetReminderActivity
+import com.vlad.lesson7_maskaikin_kotlin.MainActivity.Companion.MY_LOG
 import com.vlad.lesson7_maskaikin_kotlin.R
 import com.vlad.lesson7_maskaikin_kotlin.adapters.RVAdapter
 import com.vlad.lesson7_maskaikin_kotlin.checkAlarmBridge
 import com.vlad.lesson7_maskaikin_kotlin.getBridge.Object
 import com.vlad.lesson7_maskaikin_kotlin.getBridge.ResultBridge
-import com.vlad.lesson7_maskaikin_kotlin.retrofit.ServiceBridge
-import com.vlad.lesson7_maskaikin_kotlin.retrofit.RetrofitClient
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposable
-import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_view_list_bridge.*
 
 
 class FragmentViewListBridge : Fragment() {
 
-    private lateinit var jsonApi: ServiceBridge
-    private lateinit var disposable: Disposable
+    private var bridges: ResultBridge? = null
 
 
     companion object {
         const val BRIDGE = "bridge"
+        const val ARGUMENT_BRIDGES = "argument_bridges"
 
-        fun getInstance(): FragmentViewListBridge {
-            return FragmentViewListBridge()
+        fun getInstance(bridges: ResultBridge?): FragmentViewListBridge {
+
+            val fragmentViewListBridge = FragmentViewListBridge()
+            val arguments = Bundle()
+            arguments.putParcelable(ARGUMENT_BRIDGES, bridges)
+            fragmentViewListBridge.arguments = arguments
+            return fragmentViewListBridge
+        }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        if (arguments?.getParcelable<ResultBridge>(ARGUMENT_BRIDGES)?.objects?.isNotEmpty() != null) {
+            Log.d(MY_LOG, "Получилось")
+            bridges = arguments!!.getParcelable(ARGUMENT_BRIDGES)
+        } else {
+            Log.d(MY_LOG, "Не получилось")
+
+            progressBar.visibility = View.INVISIBLE
+
+            val snackbarError = Snackbar.make(linerLayoutMainActivityParent,
+                    R.string.errorGetBridgesFromRx,
+                    Snackbar.LENGTH_INDEFINITE)
+                    .setAction(getText(R.string.yes)) {
+                        onCreate(savedInstanceState)
+                    }
+            snackbarError.show()
+
         }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
 
-        val layoutView: View = inflater.inflate(R.layout.fragment_view_list_bridge, container, false)
-
-        val retrofit = RetrofitClient.instance
-        jsonApi = retrofit.create(ServiceBridge::class.java)
-
-        return layoutView
+        return inflater.inflate(R.layout.fragment_view_list_bridge, container, false)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -54,14 +73,9 @@ class FragmentViewListBridge : Fragment() {
 
         recyclerViewListBridges.layoutManager = LinearLayoutManager(activity)
 
-        loadBridgeDisposableForListFragment()
-    }
-
-    override fun onDestroy() {
-        if (!disposable.isDisposed) {
-            disposable.dispose()
-        }
-        super.onDestroy()
+        bridges?.let { checkAlarmBridge(it, context) }
+        bridges?.let { displayData(it) }
+        progressBar.visibility = View.INVISIBLE
     }
 
     private fun displayData(bridges: ResultBridge) {
@@ -77,32 +91,5 @@ class FragmentViewListBridge : Fragment() {
         })
 
     }
-
-    private fun loadBridgeDisposableForListFragment() {
-        disposable = jsonApi.bridges()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                        { bridges ->
-                            checkAlarmBridge(bridges, context)
-                            displayData(bridges)
-                            progressBar.visibility = View.INVISIBLE
-                        },
-                        { exception ->
-                            exception.printStackTrace()
-                            progressBar.visibility = View.INVISIBLE
-
-                            val snackbarError = Snackbar.make(linerLayoutMainActivityParent,
-                                    R.string.errorGetBridgesFromRx,
-                                    Snackbar.LENGTH_INDEFINITE)
-                                    .setAction(getText(R.string.yes)) {
-                                        loadBridgeDisposableForListFragment()
-                                    }
-                            snackbarError.show()
-
-                        }
-                )
-    }
-
 }
 
