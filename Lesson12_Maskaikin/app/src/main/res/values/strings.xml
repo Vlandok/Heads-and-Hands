@@ -1,0 +1,41 @@
+<resources>
+    <string name="app_name">Lesson7_Maskaikin_Kotlin</string>
+
+    <string name="title_toolbar_main">The Most SPB</string>
+    <string name="maps">Карта</string>
+    <string name="list">Список</string>
+    <string name="remindCaps">НАПОМНИТЬ</string>
+    <string name="isEstablished">УСТАНОВЛЕНО</string>
+    <string name="alertText">За сколько до закрытия моста вас предупредить?</string>
+    <string name="positive_button_alert">ОК</string>
+    <string name="negative_button_alert">ОТМЕНИТЬ</string>
+    <string name="reminder">Напоминание</string>
+    <string name="reminder_set">Напоминание установленно!</string>
+    <string name="reminder_cancel">Напоминание отменено!</string>
+    <string name="errorGetBridgesFromRx">Не получилось загрузить мосты. Попобовать снова?</string>
+    <string name="turnOnLocationSettings">Включить разрешение на получение локации?</string>
+    <string name="replace_bridge"> мост</string>
+    <string name="replace_Bridge">Мост </string>
+    <string name="replace_empty" />
+    <string name="yes">Да</string>
+
+    <string name="error_network">Не удалось загрузить данные</string>
+    <string name="error_button_retry">Повторить</string>
+
+
+    <string name="latitude_label">Latitude</string>
+    <string name="longitude_label">Longitude</string>
+    <string name="last_update_time_label">Last location update time</string>
+
+    <string name="start_updates">Start updates</string>
+    <string name="stop_updates">Stop updates</string>
+
+    <string name="location_settings_inadequate_warning">The location settings on the device are not
+        adequate to run this sample. Fix in Settings.</string>
+
+    <string name="permission_rationale">Location permission is needed for core functionality</string>
+    <string name="permission_denied_explanation">Permission was denied, but is needed for core
+        functionality.</string>
+    <string name="settings">Settings</string>
+
+</resources>
